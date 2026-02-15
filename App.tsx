@@ -11,6 +11,7 @@ import AdminBar from './components/cms/AdminBar';
 
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +20,23 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu when clicking a link
+  const handleNavClick = () => {
+    setMobileMenuOpen(false);
+  };
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <AdminProvider>
@@ -35,6 +53,7 @@ const App: React.FC = () => {
               <span className="italic">SG</span>
             </a>
             
+            {/* Desktop Menu */}
             <div className="hidden md:flex gap-10 text-xs font-sans tracking-[0.2em] uppercase font-bold text-gray-400">
               <a href="#about" className="hover:text-brand transition-colors">À Propos</a>
               <a href="#gallery" className="hover:text-brand transition-colors">Portfolio</a>
@@ -42,8 +61,67 @@ const App: React.FC = () => {
               <a href="#resume" className="hover:text-brand transition-colors">CV</a>
               <a href="#contact" className="hover:text-brand transition-colors">Contact</a>
             </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden flex flex-col gap-1.5 p-2 z-50"
+              aria-label="Menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              <span className={`w-6 h-0.5 bg-brand-light transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+              <span className={`w-6 h-0.5 bg-brand-light transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+              <span className={`w-6 h-0.5 bg-brand-light transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            </button>
           </div>
         </nav>
+
+        {/* Mobile Menu Overlay */}
+        <div 
+          className={`fixed inset-0 z-40 bg-bg-900/95 backdrop-blur-lg transition-all duration-500 md:hidden ${
+            mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+          }`}
+        >
+          <div className={`flex flex-col items-center justify-center h-full gap-8 transition-all duration-500 delay-100 ${
+            mobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <a 
+              href="#about" 
+              onClick={handleNavClick}
+              className="font-serif text-3xl text-gray-200 hover:text-brand transition-colors"
+            >
+              À Propos
+            </a>
+            <a 
+              href="#gallery" 
+              onClick={handleNavClick}
+              className="font-serif text-3xl text-gray-200 hover:text-brand transition-colors"
+            >
+              Portfolio
+            </a>
+            <a 
+              href="#demo" 
+              onClick={handleNavClick}
+              className="font-serif text-3xl text-gray-200 hover:text-brand transition-colors"
+            >
+              Démo
+            </a>
+            <a 
+              href="#resume" 
+              onClick={handleNavClick}
+              className="font-serif text-3xl text-gray-200 hover:text-brand transition-colors"
+            >
+              CV
+            </a>
+            <a 
+              href="#contact" 
+              onClick={handleNavClick}
+              className="font-serif text-3xl text-gray-200 hover:text-brand transition-colors"
+            >
+              Contact
+            </a>
+          </div>
+        </div>
 
         {/* Main Content */}
         <main>
