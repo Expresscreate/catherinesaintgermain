@@ -163,9 +163,7 @@ const Hero: React.FC = () => {
             </a>
             
             <a 
-              href={ACTOR_PROFILE.contact.youtube} 
-              target="_blank" 
-              rel="noreferrer"
+              href="#demo"
               className="group flex items-center gap-4 text-brand-light hover:text-brand transition-all duration-300"
             >
               <span className="uppercase tracking-widest text-sm">Démo Jeu</span>

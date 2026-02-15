@@ -17,9 +17,6 @@ const Gallery: React.FC = () => {
                <p className="text-brand uppercase tracking-[0.2em] text-sm font-bold mb-4">Portfolio</p>
                <h2 className="font-serif text-5xl md:text-6xl text-brand-light">En Images</h2>
            </div>
-           <p className="text-gray-500 max-w-sm text-sm leading-relaxed">
-               Une sélection de moments capturés, sur scène et à l'écran, reflétant la diversité des rôles et l'émotion du jeu.
-           </p>
        </div>
        
        <div className="max-w-[1920px] mx-auto px-4 md:px-6">

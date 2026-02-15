@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Hero from './components/Hero';
 import About from './components/About';
 import Resume from './components/Resume';
+import DemoVideo from './components/DemoVideo';
 import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Marquee from './components/Marquee';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <div className="hidden md:flex gap-10 text-xs font-sans tracking-[0.2em] uppercase font-bold text-gray-400">
               <a href="#about" className="hover:text-brand transition-colors">À Propos</a>
               <a href="#gallery" className="hover:text-brand transition-colors">Portfolio</a>
+              <a href="#demo" className="hover:text-brand transition-colors">Démo</a>
               <a href="#resume" className="hover:text-brand transition-colors">CV</a>
               <a href="#contact" className="hover:text-brand transition-colors">Contact</a>
             </div>
@@ -57,6 +59,7 @@ const App: React.FC = () => {
 
           <About />
           <Resume />
+          <DemoVideo />
           <Gallery />
           <Contact />
         </main>
