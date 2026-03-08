@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
 import { Play, X } from 'lucide-react';
-import { useAdmin } from '../contexts/AdminContext';
 
 const DemoVideo: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAdmin, content, updateContent } = useAdmin();
   
-  const videoIdKey = 'demo_video_id';
-  const videoId = content[videoIdKey] || 'I7bIiB_sSSA';
-  
-  const changeVideoId = () => {
-    const newId = prompt("Entrez l'ID de la vidéo YouTube (ex: I7bIiB_sSSA) :", videoId);
-    if (newId && newId !== videoId) {
-      updateContent(videoIdKey, newId);
-    }
-  };
+  const videoId = 'I7bIiB_sSSA';
 
   return (
     <section id="demo" className="py-24 px-6 bg-bg-900 border-t border-bg-800 relative">
@@ -55,17 +45,6 @@ const DemoVideo: React.FC = () => {
             <span className="text-white font-serif text-xl">Démo Jeu</span>
           </div>
         </div>
-        
-        {isAdmin && (
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={changeVideoId}
-              className="bg-black/60 text-brand border border-brand px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-brand hover:text-bg-900 transition-colors"
-            >
-              Changer ID Vidéo
-            </button>
-          </div>
-        )}
       </div>
       
       {/* Modal */}

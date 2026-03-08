@@ -6,8 +6,6 @@ import DemoVideo from './components/DemoVideo';
 import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Marquee from './components/Marquee';
-import { AdminProvider } from './contexts/AdminContext';
-import AdminBar from './components/cms/AdminBar';
 
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +37,6 @@ const App: React.FC = () => {
   }, [mobileMenuOpen]);
 
   return (
-    <AdminProvider>
       <div className="bg-bg-900 min-h-screen text-gray-100 selection:bg-brand selection:text-bg-900 overflow-x-hidden">
         {/* Navigation */}
         <nav 
@@ -141,12 +138,8 @@ const App: React.FC = () => {
           <Gallery />
           <Contact />
         </main>
-
-        {/* Admin Login & Controls */}
-        <AdminBar />
       </div>
-    </AdminProvider>
-  );
+    );
 };
 
 export default App;
