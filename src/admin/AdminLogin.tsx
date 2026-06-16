@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ADMIN_CONFIG } from './config';
-import { LogIn } from 'lucide-react';
+import { LogIn, Eye, EyeOff } from 'lucide-react';
 
 interface AdminLoginProps {
   onLogin: (password: string) => void;
@@ -9,6 +9,7 @@ interface AdminLoginProps {
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,14 +38,24 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block mb-2">
                 Mot de passe
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => { setPassword(e.target.value); setError(false); }}
-                className="w-full bg-bg-900 border border-bg-700 rounded-xl p-3 text-gray-100 text-sm focus:outline-none focus:border-brand transition-colors"
-                placeholder="Entrez le mot de passe"
-                autoFocus
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => { setPassword(e.target.value); setError(false); }}
+                  className="w-full bg-bg-900 border border-bg-700 rounded-xl p-3 pr-12 text-gray-100 text-sm focus:outline-none focus:border-brand transition-colors"
+                  placeholder="Entrez le mot de passe"
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-brand-light transition-colors p-1"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {error && (
