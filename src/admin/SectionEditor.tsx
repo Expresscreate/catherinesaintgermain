@@ -248,7 +248,12 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ sectionKey, content, onCh
           {(section.links as Array<{ name: string; href: string }>).map((link, idx) => (
             <div key={idx} className="grid grid-cols-2 gap-2 p-3 bg-gray-800/30 rounded-lg border border-gray-800">
               {textInput('Nom', link.name, v => handleChange(['links', idx, 'name'], v))}
-              {textInput('Href', link.href, v => handleChange(['links', idx, 'href'], v))}
+              <div className="space-y-1">
+                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Section</label>
+                <div className="w-full bg-bg-900 border border-gray-700/50 rounded-lg p-2.5 text-gray-500 text-sm cursor-not-allowed">
+                  #{link.href.replace('#', '')}
+                </div>
+              </div>
             </div>
           ))}
         </div>
