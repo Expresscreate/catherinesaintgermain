@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { ContactContent, FooterContent } from '../src/data/types';
-import { Instagram, Youtube, X, Send } from 'lucide-react';
+import { Instagram, Youtube, Facebook, Music2, X, Send } from 'lucide-react';
 import { FlowerCorner } from './FloralPatterns';
 
 interface ContactProps {
@@ -44,8 +44,7 @@ const Contact: React.FC<ContactProps> = ({ contact, footer }) => {
     }
   };
 
-  const youtubeUrl = contact.socialLinks.find(l => l.platform === 'YouTube')?.url;
-  const instagramUrl = contact.socialLinks.find(l => l.platform === 'Instagram')?.url;
+  const { instagram, youtube, facebook, tiktok } = contact.social;
 
   return (
     <section id="contact" className="py-32 px-6 bg-bg-900 border-t border-bg-800 relative overflow-hidden">
@@ -79,8 +78,10 @@ const Contact: React.FC<ContactProps> = ({ contact, footer }) => {
              <div className="bg-bg-900 p-10 flex flex-col items-center hover:bg-bg-800 transition-colors">
                 <span className="text-brand text-xs uppercase tracking-widest mb-4">{contact.socialLabel}</span>
                 <div className="flex gap-4">
-                    {instagramUrl && <a href={instagramUrl} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Instagram strokeWidth={1.5} /></a>}
-                    {youtubeUrl && <a href={youtubeUrl} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Youtube strokeWidth={1.5} /></a>}
+                    {instagram && <a href={instagram} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Instagram strokeWidth={1.5} /></a>}
+                    {youtube && <a href={youtube} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Youtube strokeWidth={1.5} /></a>}
+                    {facebook && <a href={facebook} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Facebook strokeWidth={1.5} /></a>}
+                    {tiktok && <a href={tiktok} target="_blank" rel="noreferrer" className="text-white hover:text-brand transition-colors"><Music2 strokeWidth={1.5} /></a>}
                 </div>
              </div>
         </div>

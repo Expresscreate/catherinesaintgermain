@@ -123,10 +123,12 @@
     "location": "Québec",
     "locationLabel": "Localisation",
     "socialLabel": "Social",
-    "socialLinks": [
-      { "platform": "Instagram", "url": "https://www.instagram.com/catherine.stgermain.16?igsh=MTBkYmJtbnFmM25qYQ%3D%3D&utm_source=qr" },
-      { "platform": "YouTube", "url": "https://www.youtube.com/watch?v=I7bIiB_sSSA" }
-    ],
+    "social": {
+      "instagram": "https://www.instagram.com/catherine.stgermain.16?igsh=MTBkYmJtbnFmM25qYQ%3D%3D&utm_source=qr",
+      "youtube": "https://www.youtube.com/watch?v=I7bIiB_sSSA",
+      "facebook": "",
+      "tiktok": ""
+    },
     "formAction": "https://formsubmit.co/ajax/catherine4812@hotmail.com",
     "formSubject": "Nouveau message - Portfolio Catherine St-Germain",
     "form": {

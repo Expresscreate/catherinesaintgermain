@@ -232,12 +232,13 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ sectionKey, content, onCh
           </div>
           <div className="border-t border-gray-800 pt-4">
             <h4 className="text-brand-light font-bold text-sm uppercase tracking-wider mb-3">Réseaux Sociaux</h4>
-            {(section.socialLinks as Array<{ platform: string; url: string }>).map((link, idx) => (
-              <div key={idx} className="grid grid-cols-2 gap-2 mb-2 p-3 bg-gray-800/30 rounded-lg border border-gray-800">
-                {textInput('Plateforme', link.platform, v => handleChange(['socialLinks', idx, 'platform'], v))}
-                {textInput('URL', link.url, v => handleChange(['socialLinks', idx, 'url'], v))}
-              </div>
-            ))}
+            <p className="text-[10px] text-gray-600 mb-3 italic">Laissez vide pour ne pas afficher l'icône</p>
+            <div className="grid grid-cols-2 gap-3">
+              {textInput('Instagram', (section.social as Record<string, string>)?.instagram ?? '', v => handleChange(['social', 'instagram'], v))}
+              {textInput('YouTube', (section.social as Record<string, string>)?.youtube ?? '', v => handleChange(['social', 'youtube'], v))}
+              {textInput('Facebook', (section.social as Record<string, string>)?.facebook ?? '', v => handleChange(['social', 'facebook'], v))}
+              {textInput('TikTok', (section.social as Record<string, string>)?.tiktok ?? '', v => handleChange(['social', 'tiktok'], v))}
+            </div>
           </div>
         </div>
       );

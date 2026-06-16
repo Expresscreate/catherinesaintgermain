@@ -90,15 +90,17 @@ export interface ContactContent {
   location: string;
   locationLabel: string;
   socialLabel: string;
-  socialLinks: SocialLink[];
+  social: ContactSocial;
   form: ContactFormContent;
   formAction: string;
   formSubject: string;
 }
 
-export interface SocialLink {
-  platform: string;
-  url: string;
+export interface ContactSocial {
+  instagram: string;
+  youtube: string;
+  facebook: string;
+  tiktok: string;
 }
 
 export interface ContactFormContent {
