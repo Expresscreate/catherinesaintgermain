@@ -24,6 +24,7 @@ export interface AboutContent {
   label: string;
   headline: string;
   headlineHighlight: string;
+  headlineEnd: string;
   quote: string;
   bio: string;
   stats: {

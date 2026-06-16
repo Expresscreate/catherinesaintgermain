@@ -39,7 +39,7 @@ const About: React.FC<AboutProps> = ({ about, assets }) => {
           </div>
           
           <h2 className="font-serif text-4xl md:text-6xl text-brand-light mb-10 leading-tight">
-            {about.headline} <span className="text-brand italic">{about.headlineHighlight}</span> de la création.
+            {about.headline} <span className="text-brand italic">{about.headlineHighlight}</span> {about.headlineEnd}
           </h2>
           
           <div className="prose prose-lg prose-invert text-gray-400 font-light mb-12">

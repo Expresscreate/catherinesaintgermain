@@ -94,9 +94,10 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ sectionKey, content, onCh
       return (
         <div className="space-y-6">
           {textInput('Étiquette de section', section.label as string, v => handleChange(['label'], v))}
-          <div className="grid grid-cols-2 gap-4">
-            {textInput('Titre (début)', section.headline as string, v => handleChange(['headline'], v))}
-            {textInput('Titre (highlight)', section.headlineHighlight as string, v => handleChange(['headlineHighlight'], v))}
+          <div className="grid grid-cols-3 gap-3">
+            {textInput('Début du titre', section.headline as string, v => handleChange(['headline'], v))}
+            {textInput('Mot accentué', section.headlineHighlight as string, v => handleChange(['headlineHighlight'], v))}
+            {textInput('Fin du titre', section.headlineEnd as string, v => handleChange(['headlineEnd'], v))}
           </div>
           {textInput('Citation', section.quote as string, v => handleChange(['quote'], v))}
           {textareaInput('Biographie', section.bio as string, v => handleChange(['bio'], v))}
