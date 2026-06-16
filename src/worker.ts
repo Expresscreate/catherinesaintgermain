@@ -1,50 +1,50 @@
-import { ADMIN_CONFIG } from '../../src/admin/config';
+import { ADMIN_CONFIG } from './admin/config';
 
 interface Env {
+  ASSETS: { fetch: (request: Request) => Promise<Response> };
   GITHUB_TOKEN?: string;
   ADMIN_PASSWORD?: string;
 }
 
-interface DeployBody {
-  content: Record<string, unknown>;
-  password: string;
-  owner: string;
-  repo: string;
-  filePath: string;
-  branch: string;
-}
-
 interface GitHubContentResponse {
   sha?: string;
-  content?: string;
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const headers = {
+function corsHeaders(): Record<string, string> {
+  return {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
+}
 
-  if (context.request.method === 'OPTIONS') {
+async function handleDeploy(request: Request, env: Env): Promise<Response> {
+  const headers = corsHeaders();
+
+  if (request.method === 'OPTIONS') {
     return new Response(null, { headers });
   }
 
   try {
-    const body: DeployBody = await context.request.json();
+    const body: Record<string, unknown> = await request.json();
+    const password = body.password as string;
+    const content = body.content as Record<string, unknown>;
+    const owner = (body.owner as string) || ADMIN_CONFIG.repoOwner;
+    const repo = (body.repo as string) || ADMIN_CONFIG.repoName;
+    const filePath = (body.filePath as string) || ADMIN_CONFIG.filePath;
+    const branch = (body.branch as string) || ADMIN_CONFIG.branch || 'main';
 
-    const adminPassword = context.env.ADMIN_PASSWORD || ADMIN_CONFIG.password;
-    if (body.password !== adminPassword) {
+    const adminPassword = env.ADMIN_PASSWORD || ADMIN_CONFIG.password;
+    if (password !== adminPassword) {
       return new Response(JSON.stringify({ error: 'Mot de passe incorrect' }), { status: 401, headers });
     }
 
-    const token = context.env.GITHUB_TOKEN;
+    const token = env.GITHUB_TOKEN;
     if (!token) {
-      return new Response(JSON.stringify({ error: 'Token GitHub non configuré (variable GITHUB_TOKEN)' }), { status: 500, headers });
+      return new Response(JSON.stringify({ error: 'Token GitHub non configuré' }), { status: 500, headers });
     }
 
-    const { owner, repo, filePath, branch, content } = body;
     const baseUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
     const getRes = await fetch(`${baseUrl}?ref=${branch}`, {
@@ -61,7 +61,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const encoder = new TextEncoder();
     const bytes = encoder.encode(JSON.stringify(content, null, 2));
-    const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
+    const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join('');
     const base64Content = btoa(binary);
 
     const putBody: Record<string, unknown> = {
@@ -73,10 +73,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const putRes = await fetch(baseUrl, {
       method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(putBody),
     });
 
@@ -86,9 +83,32 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     return new Response(JSON.stringify({ success: true, message: 'Déploiement GitHub déclenché !' }), { status: 200, headers });
-
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Erreur inconnue';
     return new Response(JSON.stringify({ error: message }), { status: 500, headers });
   }
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    const pathname = url.pathname;
+
+    if (pathname === '/admin') {
+      return new Response(
+        '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><script>location.replace("/#admin")</script></head><body>Redirection...</body></html>',
+        { headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+
+    if (pathname === '/api/deploy') {
+      return handleDeploy(request, env);
+    }
+
+    try {
+      return await env.ASSETS.fetch(request);
+    } catch {
+      return new Response('Not Found', { status: 404 });
+    }
+  },
 };
