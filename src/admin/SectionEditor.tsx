@@ -189,13 +189,13 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ sectionKey, content, onCh
           {textInput('Titre', section.title as string, v => handleChange(['title'], v))}
           {textInput('Texte "Voir"', section.viewLabel as string, v => handleChange(['viewLabel'], v))}
           <div className="border-t border-gray-800 pt-4">
-            <h4 className="text-brand-light font-bold text-sm uppercase tracking-wider mb-3">Images (max 6)</h4>
-            <p className="text-[10px] text-gray-600 mb-3 italic">Ratio 3:4 suggéré (ex: 600×800px) — hébergez sur Imgur, Cloudinary, ou tout service d'images externe</p>
-            {(section.images as string[]).map((img, idx) => (
-              <div key={idx} className="mb-2">
-                {imageField(`Image #${idx + 1}`, img, v => handleChange(['images', idx], v))}
-              </div>
-            ))}
+            <h4 className="text-brand-light font-bold text-sm uppercase tracking-wider mb-3">Images</h4>
+            <p className="text-[10px] text-gray-600 mb-3 italic">Une URL par ligne. Laissez une ligne vide pour retirer une image.</p>
+            {stringListEditor(
+              'URLs des images (une par ligne)',
+              section.images as string[],
+              v => handleChange(['images'], v)
+            )}
           </div>
         </div>
       );
