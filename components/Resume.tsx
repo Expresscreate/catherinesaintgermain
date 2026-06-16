@@ -91,7 +91,7 @@ const Resume: React.FC<ResumeProps> = ({ resume }) => {
                   <div key={skillGroup.category}>
                     <h4 className="text-white uppercase tracking-widest text-xs font-bold mb-4 border-b border-bg-700 pb-2">{skillGroup.category}</h4>
                     <ul className="space-y-2">
-                      {skillGroup.items.map((item, idx) => (
+                      {skillGroup.items.filter(s => s.trim()).map((item, idx) => (
                         <li key={idx} className="text-gray-400 text-sm font-light flex items-center gap-2">
                           <span className="w-1 h-1 bg-brand rounded-full opacity-50"></span>
                           <span>{item}</span>

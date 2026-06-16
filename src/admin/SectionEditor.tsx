@@ -56,7 +56,7 @@ const stringListEditor = (label: string, val: string[], onChange: (v: string[]) 
     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">{label}</label>
     <textarea
       value={val.join('\n')}
-      onChange={e => onChange(e.target.value.split('\n').filter(s => s.trim()))}
+      onChange={e => onChange(e.target.value.split('\n'))}
       rows={4}
       className="w-full bg-bg-900 border border-gray-700 rounded-lg p-2.5 text-gray-100 text-sm focus:outline-none focus:border-brand transition-colors resize-y"
       placeholder="Un élément par ligne"
