@@ -12,12 +12,18 @@ import { Settings } from 'lucide-react';
 const AdminDashboard = lazy(() => import('./src/admin/AdminDashboard'));
 
 const App: React.FC = () => {
-  const [isAdmin, setIsAdmin] = useState(window.location.hash === '#admin');
+  const [isAdmin, setIsAdmin] = useState(
+    window.location.hash === '#admin' || window.location.pathname === '/admin'
+  );
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { content } = useContent();
 
   useEffect(() => {
+    if (window.location.pathname === '/admin' && window.location.hash !== '#admin') {
+      window.location.replace('/#admin');
+      return;
+    }
     const onHashChange = () => setIsAdmin(window.location.hash === '#admin');
     window.addEventListener('hashchange', onHashChange);
     window.addEventListener('popstate', onHashChange);
@@ -123,7 +129,7 @@ const App: React.FC = () => {
       </main>
 
       <a
-        href="#admin"
+        href="/#admin"
         className="fixed bottom-6 left-6 z-50 bg-bg-800/80 backdrop-blur border border-bg-700 p-3 rounded-full shadow-lg hover:border-brand/50 transition-all duration-300 group"
         title="Administration"
       >
