@@ -3,7 +3,7 @@ import { ADMIN_CONFIG } from './config';
 import { LogIn } from 'lucide-react';
 
 interface AdminLoginProps {
-  onLogin: () => void;
+  onLogin: (password: string) => void;
 }
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
@@ -13,7 +13,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_CONFIG.password) {
-      onLogin();
+      onLogin(password);
       setError(false);
     } else {
       setError(true);

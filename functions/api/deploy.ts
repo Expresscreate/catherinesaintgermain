@@ -1,0 +1,94 @@
+import { ADMIN_CONFIG } from '../../src/admin/config';
+
+interface Env {
+  GITHUB_TOKEN?: string;
+  ADMIN_PASSWORD?: string;
+}
+
+interface DeployBody {
+  content: Record<string, unknown>;
+  password: string;
+  owner: string;
+  repo: string;
+  filePath: string;
+  branch: string;
+}
+
+interface GitHubContentResponse {
+  sha?: string;
+  content?: string;
+}
+
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
+
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, { headers });
+  }
+
+  try {
+    const body: DeployBody = await context.request.json();
+
+    const adminPassword = context.env.ADMIN_PASSWORD || ADMIN_CONFIG.password;
+    if (body.password !== adminPassword) {
+      return new Response(JSON.stringify({ error: 'Mot de passe incorrect' }), { status: 401, headers });
+    }
+
+    const token = context.env.GITHUB_TOKEN;
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Token GitHub non configuré (variable GITHUB_TOKEN)' }), { status: 500, headers });
+    }
+
+    const { owner, repo, filePath, branch, content } = body;
+    const baseUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+
+    const getRes = await fetch(`${baseUrl}?ref=${branch}`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' },
+    });
+
+    let sha: string | undefined;
+    if (getRes.ok) {
+      const data: GitHubContentResponse = await getRes.json();
+      sha = data.sha;
+    } else if (getRes.status !== 404) {
+      throw new Error(`GitHub GET failed: ${getRes.status}`);
+    }
+
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(JSON.stringify(content, null, 2));
+    const binary = Array.from(bytes, b => String.fromCharCode(b)).join('');
+    const base64Content = btoa(binary);
+
+    const putBody: Record<string, unknown> = {
+      message: ADMIN_CONFIG.commitMessage,
+      content: base64Content,
+      branch,
+    };
+    if (sha) putBody.sha = sha;
+
+    const putRes = await fetch(baseUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(putBody),
+    });
+
+    if (!putRes.ok) {
+      const errText = await putRes.text();
+      throw new Error(`GitHub PUT failed: ${putRes.status} — ${errText}`);
+    }
+
+    return new Response(JSON.stringify({ success: true, message: 'Déploiement GitHub déclenché !' }), { status: 200, headers });
+
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Erreur inconnue';
+    return new Response(JSON.stringify({ error: message }), { status: 500, headers });
+  }
+};

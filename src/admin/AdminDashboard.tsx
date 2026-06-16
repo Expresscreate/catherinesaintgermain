@@ -23,16 +23,16 @@ const SECTIONS = [
 
 const AdminDashboard: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
   const [activeSection, setActiveSection] = useState('hero');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [previewToast, setPreviewToast] = useState(false);
   const [deployToast, setDeployToast] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
 
   const { content, updateContent, savePreview, resetToDefault, hasOverrides } = useContent();
 
   if (!loggedIn) {
-    return <AdminLogin onLogin={() => setLoggedIn(true)} />;
+    return <AdminLogin onLogin={(pwd) => { setAdminPassword(pwd); setLoggedIn(true); }} />;
   }
 
   const handleSavePreview = () => {
@@ -56,12 +56,8 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="fixed inset-0 bg-bg-900 z-[100] flex flex-col overflow-hidden">
-      {showSettings && (
-        <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm" />
-      )}
-
       <div className="flex flex-1 min-h-0 relative z-10">
-        <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-bg-800 border-r border-bg-700 flex-shrink-0 transition-all duration-300 overflow-hidden ${showSettings ? 'pointer-events-none opacity-40' : ''}`}>
+        <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-bg-800 border-r border-bg-700 flex-shrink-0 transition-all duration-300 overflow-hidden`}>
           <div className="h-full flex flex-col">
             <div className="p-4 border-b border-bg-700 flex items-center justify-between">
               <div>
@@ -104,7 +100,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </aside>
 
-        <div className={`flex-1 flex flex-col min-w-0 ${showSettings ? 'pointer-events-none opacity-40' : ''}`}>
+        <div className="flex-1 flex flex-col min-w-0">
           <header className="bg-bg-800/80 backdrop-blur-md border-b border-bg-700 px-4 py-3 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               {!sidebarOpen && (
@@ -147,7 +143,7 @@ const AdminDashboard: React.FC = () => {
 
       <footer className="bg-bg-800/90 backdrop-blur-md border-t border-bg-700 px-4 py-3 flex-shrink-0 relative z-40">
         <div className="max-w-4xl mx-auto space-y-2">
-          <GitHubPusher content={content} onDeploy={handleDeploy} settingsOpen={showSettings} onToggleSettings={setShowSettings} />
+          <GitHubPusher content={content} password={adminPassword} onDeploy={handleDeploy} />
           <div className="flex items-center gap-3">
             <button
               onClick={handleSavePreview}
