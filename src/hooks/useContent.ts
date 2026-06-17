@@ -9,6 +9,19 @@ export function useContent() {
   const [hasOverrides, setHasOverrides] = useState(() => {
     return localStorage.getItem(STORAGE_KEY) !== null;
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then((remote: SiteContent) => {
+        if (remote && Object.keys(remote).length > 0) {
+          setContent(remote);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -58,6 +71,7 @@ export function useContent() {
   return {
     content,
     hasOverrides,
+    loading,
     updateContent,
     savePreview,
     resetToDefault,

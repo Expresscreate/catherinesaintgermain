@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ADMIN_CONFIG } from './config';
 import type { SiteContent } from '../data/types';
-import { Github, Loader, Globe } from 'lucide-react';
+import { Globe, Loader, Save } from 'lucide-react';
 
 interface GitHubPusherProps {
   content: SiteContent;
@@ -13,21 +13,14 @@ const GitHubPusher: React.FC<GitHubPusherProps> = ({ content, password, onDeploy
   const [status, setStatus] = useState<'idle' | 'deploying' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
-  const deployToGitHub = async () => {
+  const deploy = async () => {
     setStatus('deploying');
     setMessage('Publication en cours...');
     try {
       const res = await fetch('/api/deploy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content,
-          password,
-          owner: ADMIN_CONFIG.repoOwner,
-          repo: ADMIN_CONFIG.repoName,
-          filePath: ADMIN_CONFIG.filePath,
-          branch: ADMIN_CONFIG.branch || 'main',
-        }),
+        body: JSON.stringify({ content, password }),
       });
 
       if (!res.ok) {
@@ -38,9 +31,8 @@ const GitHubPusher: React.FC<GitHubPusherProps> = ({ content, password, onDeploy
       }
 
       const data = await res.json();
-
       setStatus('success');
-      setMessage('Déploiement déclenché ! Le site sera mis à jour dans 1-2 minutes.');
+      setMessage(data.message || 'Contenu publié en direct !');
       onDeploy();
     } catch (err) {
       setStatus('error');
@@ -52,18 +44,18 @@ const GitHubPusher: React.FC<GitHubPusherProps> = ({ content, password, onDeploy
     <div className="space-y-3">
       <div className="flex items-center gap-3">
         <div className="flex-1 bg-bg-800/50 rounded-lg px-4 py-2 text-xs text-gray-500 flex items-center gap-2 border border-bg-700">
-          <Globe size={14} className="text-indigo-400" />
-          <span>Publier sur <strong className="text-gray-400">{ADMIN_CONFIG.repoOwner}/{ADMIN_CONFIG.repoName}</strong></span>
+          <Globe size={14} className="text-emerald-400" />
+          <span>Publier en direct sur <strong className="text-gray-400">{ADMIN_CONFIG.siteTitle}</strong></span>
         </div>
         <button
-          onClick={deployToGitHub}
+          onClick={deploy}
           disabled={status === 'deploying'}
-          className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm flex-shrink-0"
+          className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm flex-shrink-0"
         >
           {status === 'deploying' ? (
             <><Loader size={18} className="animate-spin" /> Publication...</>
           ) : (
-            <><Github size={18} /> Confirmer & Publier</>
+            <><Save size={18} /> Publier en direct</>
           )}
         </button>
       </div>
