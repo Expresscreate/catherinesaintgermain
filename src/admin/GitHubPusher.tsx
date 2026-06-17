@@ -30,8 +30,14 @@ const GitHubPusher: React.FC<GitHubPusherProps> = ({ content, password, onDeploy
         }),
       });
 
+      if (!res.ok) {
+        const text = await res.text();
+        let errMsg: string;
+        try { errMsg = JSON.parse(text).error || text; } catch { errMsg = text || `HTTP ${res.status}`; }
+        throw new Error(errMsg);
+      }
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
       setStatus('success');
       setMessage('Déploiement déclenché ! Le site sera mis à jour dans 1-2 minutes.');

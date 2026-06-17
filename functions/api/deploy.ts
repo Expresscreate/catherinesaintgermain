@@ -1,36 +1,35 @@
-interface Env {
-  GITHUB_TOKEN?: string;
-  ADMIN_PASSWORD?: string;
-}
+export async function onRequest(context) {
+  if (context.request.method === 'GET') {
+    return new Response(JSON.stringify({ status: 'ok', message: 'API deploy prête' }), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
+  }
 
-const REPO_OWNER = 'Expresscreate';
-const REPO_NAME = 'catherinestgermain';
-const FILE_PATH = 'src/data/content.json';
-const COMMIT_MESSAGE = 'Mise à jour du contenu via admin panel';
-const DEFAULT_PASSWORD = 'catherineadmin2026';
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' },
+    });
+  }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
+  if (context.request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Méthode non autorisée' }), { status: 405, headers: { 'Content-Type': 'application/json' } });
+  }
+
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
 
-  if (context.request.method === 'OPTIONS') {
-    return new Response(null, { headers });
-  }
-
   try {
-    const body: Record<string, unknown> = await context.request.json();
-    const password = body.password as string;
-    const content = body.content as Record<string, unknown>;
-    const owner = (body.owner as string) || REPO_OWNER;
-    const repo = (body.repo as string) || REPO_NAME;
-    const filePath = (body.filePath as string) || FILE_PATH;
-    const branch = (body.branch as string) || 'main';
+    const body = await context.request.json();
+    const password = body.password;
+    const content = body.content;
+    const owner = body.owner || 'Expresscreate';
+    const repo = body.repo || 'catherinestgermain';
+    const filePath = body.filePath || 'src/data/content.json';
+    const branch = body.branch || 'main';
 
-    const adminPassword = context.env.ADMIN_PASSWORD || DEFAULT_PASSWORD;
+    const adminPassword = context.env.ADMIN_PASSWORD || 'catherineadmin2026';
     if (password !== adminPassword) {
       return new Response(JSON.stringify({ error: 'Mot de passe incorrect' }), { status: 401, headers });
     }
@@ -46,21 +45,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' },
     });
 
-    let sha: string | undefined;
+    let sha;
     if (getRes.ok) {
-      const data = await getRes.json() as { sha?: string };
+      const data = await getRes.json();
       sha = data.sha;
     } else if (getRes.status !== 404) {
       throw new Error(`GitHub GET failed: ${getRes.status}`);
     }
 
-    const encoder = new TextEncoder();
-    const bytes = encoder.encode(JSON.stringify(content, null, 2));
-    const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join('');
-    const base64Content = btoa(binary);
+    const base64Content = btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2))));
 
-    const putBody: Record<string, unknown> = {
-      message: COMMIT_MESSAGE,
+    const putBody = {
+      message: 'Mise à jour du contenu via admin panel',
       content: base64Content,
       branch,
     };
@@ -79,7 +75,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return new Response(JSON.stringify({ success: true, message: 'Déploiement GitHub déclenché !' }), { status: 200, headers });
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Erreur inconnue';
-    return new Response(JSON.stringify({ error: message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: err.message || 'Erreur inconnue' }), { status: 500, headers });
   }
-};
+}
