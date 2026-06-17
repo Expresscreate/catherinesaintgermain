@@ -1,13 +1,13 @@
-import { ADMIN_CONFIG } from '../../src/admin/config';
-
 interface Env {
   GITHUB_TOKEN?: string;
   ADMIN_PASSWORD?: string;
 }
 
-interface GitHubContentResponse {
-  sha?: string;
-}
+const REPO_OWNER = 'Expresscreate';
+const REPO_NAME = 'catherinestgermain';
+const FILE_PATH = 'src/data/content.json';
+const COMMIT_MESSAGE = 'Mise à jour du contenu via admin panel';
+const DEFAULT_PASSWORD = 'catherineadmin2026';
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const headers = {
@@ -25,12 +25,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const body: Record<string, unknown> = await context.request.json();
     const password = body.password as string;
     const content = body.content as Record<string, unknown>;
-    const owner = (body.owner as string) || ADMIN_CONFIG.repoOwner;
-    const repo = (body.repo as string) || ADMIN_CONFIG.repoName;
-    const filePath = (body.filePath as string) || ADMIN_CONFIG.filePath;
+    const owner = (body.owner as string) || REPO_OWNER;
+    const repo = (body.repo as string) || REPO_NAME;
+    const filePath = (body.filePath as string) || FILE_PATH;
     const branch = (body.branch as string) || 'main';
 
-    const adminPassword = context.env.ADMIN_PASSWORD || ADMIN_CONFIG.password;
+    const adminPassword = context.env.ADMIN_PASSWORD || DEFAULT_PASSWORD;
     if (password !== adminPassword) {
       return new Response(JSON.stringify({ error: 'Mot de passe incorrect' }), { status: 401, headers });
     }
@@ -48,7 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     let sha: string | undefined;
     if (getRes.ok) {
-      const data: GitHubContentResponse = await getRes.json();
+      const data = await getRes.json() as { sha?: string };
       sha = data.sha;
     } else if (getRes.status !== 404) {
       throw new Error(`GitHub GET failed: ${getRes.status}`);
@@ -60,7 +60,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const base64Content = btoa(binary);
 
     const putBody: Record<string, unknown> = {
-      message: ADMIN_CONFIG.commitMessage,
+      message: COMMIT_MESSAGE,
       content: base64Content,
       branch,
     };
