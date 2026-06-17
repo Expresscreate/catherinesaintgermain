@@ -33,7 +33,7 @@ async function handleDeploy(request: Request, env: Env): Promise<Response> {
     const password = body.password as string;
     const content = body.content as Record<string, unknown>;
     const owner = (body.owner as string) || 'Expresscreate';
-    const repo = (body.repo as string) || 'catherinestgermain';
+    const repo = (body.repo as string) || 'catherinesaintgermain';
     const filePath = (body.filePath as string) || 'src/data/content.json';
     const branch = (body.branch as string) || 'main';
 

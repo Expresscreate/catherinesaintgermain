@@ -3,7 +3,7 @@ export const ADMIN_CONFIG = {
   adminTitle: 'Administration du Portfolio',
   siteTitle: 'Catherine St-Germain',
   repoOwner: 'Expresscreate',
-  repoName: 'catherinestgermain',
+  repoName: 'catherinesaintgermain',
   repoToken: '',
   filePath: 'src/data/content.json',
   branch: 'main',
