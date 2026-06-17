@@ -285,15 +285,6 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ sectionKey, content, onCh
             {imageField('Portrait', section.portrait as string, v => handleChange(['portrait'], v))}
             {imageField('CV (PDF)', section.cv as string, v => handleChange(['cv'], v))}
           </div>
-          <div className="border-t border-gray-800 pt-4">
-            <h4 className="text-brand-light font-bold text-sm uppercase tracking-wider mb-3">Images de la galerie (URLs externes)</h4>
-            <p className="text-[10px] text-gray-600 mb-3 italic">Ratio 3:4 suggéré (ex: 600×800px) — collez une URL Imgur, Cloudinary, etc.</p>
-            {(section.gallery as string[]).map((img, idx) => (
-              <div key={idx} className="mb-2">
-                {imageField(`Image #${idx + 1}`, img, v => handleChange(['gallery', idx], v))}
-              </div>
-            ))}
-          </div>
         </div>
       );
 
