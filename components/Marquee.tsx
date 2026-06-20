@@ -21,8 +21,8 @@ const Marquee: React.FC<MarqueeProps> = ({
         {[...Array(4)].map((_, i) => (
           <div 
             key={i} 
-            className={`flex animate-marquee ${direction === 'right' ? 'animate-reverse' : ''}`}
-            style={{ animationDuration: `${speed}s` }}
+            className={`flex animate-marquee`}
+            style={{ animationDuration: `${speed}s`, animationDirection: direction === 'right' ? 'reverse' : 'normal' }}
           >
             {text.map((item, index) => (
               <span key={index} className="mx-8 text-4xl md:text-6xl font-serif italic font-bold tracking-tighter uppercase flex items-center">

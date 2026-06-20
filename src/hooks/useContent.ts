@@ -64,10 +64,6 @@ export function useContent() {
     setHasOverrides(false);
   }, []);
 
-  const getContent = useCallback(() => {
-    return content;
-  }, [content]);
-
   return {
     content,
     hasOverrides,
@@ -75,6 +71,5 @@ export function useContent() {
     updateContent,
     savePreview,
     resetToDefault,
-    getContent,
   };
 }

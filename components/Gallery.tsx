@@ -10,7 +10,8 @@ interface GalleryProps {
 const Gallery: React.FC<GalleryProps> = ({ gallery, assets }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const images = gallery.images.filter(Boolean).length > 0 ? gallery.images : assets.gallery;
+  const images = (gallery.images || assets.gallery || []).filter(Boolean);
+  const hasImages = images.length > 0;
 
   return (
     <section id="gallery" className="py-32 bg-bg-900">
@@ -23,7 +24,7 @@ const Gallery: React.FC<GalleryProps> = ({ gallery, assets }) => {
 
       <div className="max-w-[1920px] mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
-          {images.filter(Boolean).map((src, index) => (
+          {images.map((src, index) => (
             <div key={index} className="relative group aspect-[3/4] overflow-hidden">
               <img
                 src={src}

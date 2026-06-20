@@ -8,18 +8,8 @@ interface ContactProps {
   footer: FooterContent;
 }
 
-const formatContent = (html: string) => ({ __html: html });
-
-const PolitiqueConfidentialite: React.FC<{ content: string }> = ({ content }) => (
-  <div className="text-left text-gray-400 text-sm leading-relaxed" dangerouslySetInnerHTML={formatContent(content)} />
-);
-
-const TermesConditions: React.FC<{ content: string }> = ({ content }) => (
-  <div className="text-left text-gray-400 text-sm leading-relaxed" dangerouslySetInnerHTML={formatContent(content)} />
-);
-
 const Contact: React.FC<ContactProps> = ({ contact, footer }) => {
-  const [modalContent, setModalContent] = useState<'politique' | 'termes' | null>(null);
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -138,7 +128,7 @@ const Contact: React.FC<ContactProps> = ({ contact, footer }) => {
                   <React.Fragment key={idx}>
                     {idx > 0 && <span className="w-1 h-1 rounded-full bg-bg-700"></span>}
                     <button
-                      onClick={() => setModalContent(link.name === 'Politique de Confidentialité' ? 'politique' : 'termes')}
+                      onClick={() => setModalIndex(idx)}
                       className="hover:text-brand transition-colors cursor-pointer"
                     >
                       {link.name}
@@ -148,20 +138,15 @@ const Contact: React.FC<ContactProps> = ({ contact, footer }) => {
             </div>
         </footer>
 
-        {modalContent && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setModalContent(null)}>
+        {modalIndex !== null && footer.legalLinks[modalIndex] && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setModalIndex(null)}>
             <div className="bg-bg-900 border border-bg-700 p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-end mb-4">
-                <button onClick={() => setModalContent(null)} className="text-gray-400 hover:text-brand transition-colors">
+                <button onClick={() => setModalIndex(null)} className="text-gray-400 hover:text-brand transition-colors">
                   <X size={24} />
                 </button>
               </div>
-              {modalContent === 'politique' && (
-                <PolitiqueConfidentialite content={footer.legalLinks.find(l => l.name === 'Politique de Confidentialité')?.content || ''} />
-              )}
-              {modalContent === 'termes' && (
-                <TermesConditions content={footer.legalLinks.find(l => l.name === 'Termes et Conditions')?.content || ''} />
-              )}
+              <div className="text-left text-gray-400 text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: footer.legalLinks[modalIndex].content }} />
             </div>
           </div>
         )}

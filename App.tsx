@@ -17,7 +17,7 @@ const App: React.FC = () => {
   );
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { content } = useContent();
+  const { content, loading } = useContent();
 
   useEffect(() => {
     if (window.location.pathname === '/admin' && window.location.hash !== '#admin') {
